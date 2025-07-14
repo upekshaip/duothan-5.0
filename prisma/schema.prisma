@@ -5,14 +5,12 @@ generator client {
 datasource db {
   provider = "mysql"
   url      = "mysql://root@localhost:3306/duothan"
-  // url      = "mysql://root@localhost:8111/sudojet"
 }
 
 model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
-  firstName String
-  lastName  String?
+  name      String
   gender    String?
   password  String?
   createdAt DateTime @default(now())

@@ -14,11 +14,10 @@ const GetNavBar = async () => {
       select: {
         id: true,
         name: true,
-        username: true,
         email: true,
-        image: true,
       },
     });
+    console.log(user);
 
     return <DashNav user={user} />;
   };

@@ -93,12 +93,13 @@ export default function NavBar() {
       document.documentElement.classList.remove("dark");
     } else {
       setTheme("dark");
+      localStorage.setItem("theme", "dark");
       document.documentElement.classList.add("dark");
     }
   };
 
   return (
-    <div className="sticky top-0 z-30 mx-auto flex w-full bg-slate-50 bg-opacity-60 backdrop-blur dark:bg-stone-950 dark:bg-opacity-50 border-none shadow">
+    <div className="sticky top-0 z-30 mx-auto flex w-full bg-opacity-60 backdrop-blur border-none shadow">
       <nav
         ref={menuRef}
         className={`${
@@ -106,18 +107,12 @@ export default function NavBar() {
         } my-transition flex w-full transform flex-col justify-between px-5 md:py-2 py-2.5 align-middle transition duration-500 ease-out md:mb-auto md:flex-row`}
       >
         <div className="md:w-1/3 flex items-center">
-          <div className="max-w-16 h-10 items-center justify-center flex">
+          <div className="max-w-16 h-10 items-center justify-center flex ">
             <button
               className="m-0 p-0"
-              href="/"
               onClick={(e) => handleScroll(e, "home")}
             >
-              <p className="uppercase poppins-bold">
-                <span className="font-bold">
-                  Sudo<span className="text-blue-500">Jet</span>
-                </span>
-              </p>
-              {/* <Image alt="upekshaip" src={rocket_logo} className="max-w-16" /> */}
+              <p className="uppercase poppins-bold">LOGO</p>
             </button>
           </div>
         </div>

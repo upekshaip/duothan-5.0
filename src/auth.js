@@ -9,6 +9,7 @@ import { prisma } from "@/prisma";
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Credentials({
+      id: "credentials",
       name: "credentials",
       credentials: {
         email: { label: "Email", type: "text" },
@@ -31,8 +32,34 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
       },
     }),
+    Credentials({
+      id: "admin",
+      name: "admin",
+      credentials: {
+        email: { label: "Email", type: "text" },
+        password: { label: "Password", type: "password" },
+      },
+      authorize: async (credentials) => {
+        const logUser = await prisma.admin.findFirst({
+          where: {
+            email: credentials.email,
+          },
+        });
+        if (logUser) {
+          const isValid = await compare(credentials.password, logUser.password);
+          if (!isValid) {
+            return redirect(
+              "/admin-login?error=Email or password is incorrect"
+            );
+          }
+          return { email: logUser.email, name: logUser.name };
+        } else {
+          return redirect("/admin-login?error=Email or password is incorrect");
+        }
+      },
+    }),
   ],
   pages: {
-    signIn: "/login",
+    signIn: "/admin-login",
   },
 });

@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import {
   Users,
@@ -127,19 +128,19 @@ const Dashboard = () => {
   const [modalType, setModalType] = useState("");
 
   const StatCard = ({ title, value, icon: Icon, trend, color }) => (
-    <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-500 hover:shadow-xl transition-shadow duration-300">
+    <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-gray-800 hover:shadow-xl transition-shadow duration-300">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm font-medium text-gray-600">{title}</p>
           <p className="text-2xl font-bold text-gray-900 mt-1">{value}</p>
           {trend && (
-            <p className="text-sm text-green-600 mt-1 flex items-center">
+            <p className="text-sm text-gray-700 mt-1 flex items-center">
               <TrendingUp className="w-4 h-4 mr-1" />
               {trend}
             </p>
           )}
         </div>
-        <div className={`p-3 rounded-full ${color}`}>
+        <div className="p-3 rounded-full bg-gray-800">
           <Icon className="w-6 h-6 text-white" />
         </div>
       </div>
@@ -150,7 +151,7 @@ const Dashboard = () => {
     <div className="bg-white rounded-xl shadow-lg p-6">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-900">Top Teams</h3>
-        <Trophy className="w-5 h-5 text-yellow-500" />
+        <Trophy className="w-5 h-5 text-gray-600" />
       </div>
       <div className="space-y-3">
         {mockLeaderboard.map((team, index) => (
@@ -162,11 +163,11 @@ const Dashboard = () => {
               <span
                 className={`w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold ${
                   index === 0
-                    ? "bg-yellow-500 text-white"
+                    ? "bg-black text-white"
                     : index === 1
-                    ? "bg-gray-400 text-white"
+                    ? "bg-gray-600 text-white"
                     : index === 2
-                    ? "bg-amber-600 text-white"
+                    ? "bg-gray-500 text-white"
                     : "bg-gray-200 text-gray-600"
                 }`}
               >
@@ -197,10 +198,10 @@ const Dashboard = () => {
             {challenge.title}
           </h3>
           <span
-            className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
+            className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
               challenge.status === "Active"
-                ? "bg-green-100 text-green-800"
-                : "bg-yellow-100 text-yellow-800"
+                ? "bg-gray-800 text-white"
+                : "bg-gray-200 text-gray-800"
             }`}
           >
             {challenge.status}
@@ -213,7 +214,7 @@ const Dashboard = () => {
               setShowModal(true);
               setModalType("view");
             }}
-            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
+            className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
           >
             <Eye className="w-4 h-4" />
           </button>
@@ -223,7 +224,7 @@ const Dashboard = () => {
               setShowModal(true);
               setModalType("edit");
             }}
-            className="p-2 text-green-600 hover:bg-green-50 rounded-lg"
+            className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
           >
             <Edit className="w-4 h-4" />
           </button>
@@ -233,7 +234,7 @@ const Dashboard = () => {
                 setChallenges(challenges.filter((c) => c.id !== challenge.id));
               }
             }}
-            className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
+            className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
           >
             <Trash2 className="w-4 h-4" />
           </button>
@@ -241,16 +242,16 @@ const Dashboard = () => {
       </div>
 
       <div className="grid grid-cols-2 gap-4 mb-4">
-        <div className="text-center p-3 bg-blue-50 rounded-lg">
-          <Users className="w-5 h-5 mx-auto mb-1 text-blue-600" />
-          <p className="text-sm font-medium text-blue-600">
+        <div className="text-center p-3 bg-gray-100 rounded-lg">
+          <Users className="w-5 h-5 mx-auto mb-1 text-gray-600" />
+          <p className="text-sm font-medium text-gray-600">
             {challenge.participants}
           </p>
           <p className="text-xs text-gray-500">Participants</p>
         </div>
-        <div className="text-center p-3 bg-green-50 rounded-lg">
-          <FileText className="w-5 h-5 mx-auto mb-1 text-green-600" />
-          <p className="text-sm font-medium text-green-600">
+        <div className="text-center p-3 bg-gray-100 rounded-lg">
+          <FileText className="w-5 h-5 mx-auto mb-1 text-gray-600" />
+          <p className="text-sm font-medium text-gray-600">
             {challenge.submissions}
           </p>
           <p className="text-xs text-gray-500">Submissions</p>
@@ -258,25 +259,25 @@ const Dashboard = () => {
       </div>
 
       <div className="space-y-3">
-        <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
+        <div className="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
           <div className="flex items-center space-x-2">
-            <Code className="w-4 h-4 text-purple-600" />
-            <span className="text-sm font-medium text-purple-600">
+            <Code className="w-4 h-4 text-gray-600" />
+            <span className="text-sm font-medium text-gray-600">
               Algorithmic
             </span>
           </div>
-          <span className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">
+          <span className="text-xs bg-gray-200 text-gray-800 px-2 py-1 rounded">
             {challenge.algorithmic.difficulty}
           </span>
         </div>
-        <div className="flex items-center justify-between p-3 bg-orange-50 rounded-lg">
+        <div className="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
           <div className="flex items-center space-x-2">
-            <Target className="w-4 h-4 text-orange-600" />
-            <span className="text-sm font-medium text-orange-600">
+            <Target className="w-4 h-4 text-gray-600" />
+            <span className="text-sm font-medium text-gray-600">
               Buildathon
             </span>
           </div>
-          <span className="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded">
+          <span className="text-xs bg-gray-200 text-gray-800 px-2 py-1 rounded">
             {challenge.buildathon.duration}
           </span>
         </div>
@@ -674,7 +675,7 @@ const Dashboard = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-4">
-              <div className="bg-blue-600 p-2 rounded-lg">
+              <div className="bg-black p-2 rounded-lg">
                 <Activity className="w-6 h-6 text-white" />
               </div>
               <h1 className="text-2xl font-bold text-gray-900">
@@ -682,7 +683,7 @@ const Dashboard = () => {
               </h1>
             </div>
             <div className="flex items-center space-x-4">
-              <button className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+              <button className="flex items-center space-x-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">
                 <Plus className="w-4 h-4" />
                 <span>New Challenge</span>
               </button>
@@ -700,7 +701,7 @@ const Dashboard = () => {
               onClick={() => setActiveTab("overview")}
               className={`py-4 px-2 border-b-2 font-medium text-sm ${
                 activeTab === "overview"
-                  ? "border-blue-500 text-blue-600"
+                  ? "border-black text-black"
                   : "border-transparent text-gray-500 hover:text-gray-700"
               }`}
             >
@@ -710,7 +711,7 @@ const Dashboard = () => {
               onClick={() => setActiveTab("challenges")}
               className={`py-4 px-2 border-b-2 font-medium text-sm ${
                 activeTab === "challenges"
-                  ? "border-blue-500 text-blue-600"
+                  ? "border-black text-black"
                   : "border-transparent text-gray-500 hover:text-gray-700"
               }`}
             >
@@ -731,28 +732,24 @@ const Dashboard = () => {
                 value={mockStats.registeredTeams.toLocaleString()}
                 icon={Users}
                 trend="+12% from last month"
-                color="bg-blue-500"
               />
               <StatCard
                 title="Active Challenges"
                 value={mockStats.activeChallenges}
                 icon={Trophy}
                 trend="+3 new this week"
-                color="bg-green-500"
               />
               <StatCard
                 title="Total Submissions"
                 value={mockStats.totalSubmissions.toLocaleString()}
                 icon={FileText}
                 trend="+234 today"
-                color="bg-purple-500"
               />
               <StatCard
                 title="Completed Challenges"
                 value={mockStats.completedChallenges}
                 icon={Target}
                 trend="2 completed this week"
-                color="bg-orange-500"
               />
             </div>
 
@@ -764,7 +761,7 @@ const Dashboard = () => {
                   <h3 className="text-lg font-semibold text-gray-900">
                     Activity Overview
                   </h3>
-                  <BarChart3 className="w-5 h-5 text-blue-500" />
+                  <BarChart3 className="w-5 h-5 text-gray-600" />
                 </div>
                 <div className="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
                   <div className="text-center">
@@ -823,10 +820,10 @@ const Dashboard = () => {
                       <div
                         className={`w-2 h-2 rounded-full ${
                           activity.type === "success"
-                            ? "bg-green-500"
+                            ? "bg-gray-800"
                             : activity.type === "info"
-                            ? "bg-blue-500"
-                            : "bg-yellow-500"
+                            ? "bg-gray-600"
+                            : "bg-gray-500"
                         }`}
                       ></div>
                       <div>
@@ -859,7 +856,7 @@ const Dashboard = () => {
                   setShowModal(true);
                   setModalType("create");
                 }}
-                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                className="flex items-center space-x-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800"
               >
                 <Plus className="w-4 h-4" />
                 <span>Create New Challenge</span>
@@ -873,7 +870,7 @@ const Dashboard = () => {
                 <input
                   type="text"
                   placeholder="Search challenges..."
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
                 />
               </div>
               <button className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
@@ -905,7 +902,7 @@ const Dashboard = () => {
                     setShowModal(true);
                     setModalType("create");
                   }}
-                  className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 mx-auto"
+                  className="flex items-center space-x-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 mx-auto"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Create Challenge</span>

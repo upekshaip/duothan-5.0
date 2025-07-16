@@ -12,12 +12,13 @@ model User {
   email     String   @unique
   name      String
   role      String   @default("USER")
+  signupType String   @default("EMAIL")
   gender    String?
   password  String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  teamId    Int
-  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teamId    Int?
+  team      Team?     @relation(fields: [teamId], references: [id], onDelete: Cascade)
   algorithmicAnswers AlgorithmicAnswers[]
   buildathonAnswers BuildathonAnswers[]
 }

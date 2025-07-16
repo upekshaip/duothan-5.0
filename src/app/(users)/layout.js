@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import DashNav from "../components/NavBars/DashNav";
 import { prisma } from "@/prisma";
 
-const DashboardLayout = async ({ children }) => {
+const UserLayout = async ({ children }) => {
   const session = await auth();
 
   if (!session) return redirect("/login");
@@ -13,6 +13,8 @@ const DashboardLayout = async ({ children }) => {
   });
 
   if (!user) return redirect("/signup");
+  if (user.role !== "USER") return redirect("/unauthorized");
+  if (!user.teamId) return redirect("/registration");
 
   const { password, ...filteredUser } = user;
 
@@ -24,4 +26,4 @@ const DashboardLayout = async ({ children }) => {
   );
 };
 
-export default DashboardLayout;
+export default UserLayout;

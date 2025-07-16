@@ -4,17 +4,18 @@ import { redirect } from "next/navigation";
 import DashNav from "../components/NavBars/DashNav";
 import { prisma } from "@/prisma";
 
-const DashboardLayout = async ({ children }) => {
+const AdminLayout = async ({ children }) => {
   const session = await auth();
 
   if (!session) return redirect("/login");
-  const user = await prisma.user.findFirst({
+  const admin = await prisma.admin.findFirst({
     where: { email: session.user.email },
   });
 
-  if (!user) return redirect("/signup");
+  if (!admin) return redirect("/unauthorized");
+  if (admin.role !== "ADMIN") return redirect("/unauthorized");
 
-  const { password, ...filteredUser } = user;
+  const { password, ...filteredUser } = admin;
 
   return (
     <div className="px-2 poppins-regular">
@@ -24,4 +25,4 @@ const DashboardLayout = async ({ children }) => {
   );
 };
 
-export default DashboardLayout;
+export default AdminLayout;

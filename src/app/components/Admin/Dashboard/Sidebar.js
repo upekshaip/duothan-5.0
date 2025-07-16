@@ -31,7 +31,7 @@ const Sidebar = () => {
         },
         {
           title: "Challenge Management",
-          path: "/admin-dashboard/challenges",
+          path: "/admin-challenges",
           icon: (
             <svg
               className="w-5 h-5"
@@ -51,7 +51,7 @@ const Sidebar = () => {
         },
         {
           title: "Current Challenges",
-          path: "/admin-dashboard/current-challenges",
+          path: "/admin-current-challenges",
           icon: (
             <svg
               className="w-5 h-5"
@@ -71,7 +71,7 @@ const Sidebar = () => {
         },
         {
           title: "Team Management",
-          path: "/admin-dashboard/teams",
+          path: "/admin-teams",
           icon: (
             <svg
               className="w-5 h-5"
@@ -113,7 +113,7 @@ const Sidebar = () => {
         },
         {
           title: "Active Challenges",
-          path: "/user-dashboard/challenges",
+          path: "/user-challenges",
           icon: (
             <svg
               className="w-5 h-5"
@@ -133,7 +133,7 @@ const Sidebar = () => {
         },
         {
           title: "My Submissions",
-          path: "/user-dashboard/submissions",
+          path: "/user-submissions",
           icon: (
             <svg
               className="w-5 h-5"
@@ -153,7 +153,7 @@ const Sidebar = () => {
         },
         {
           title: "Leaderboard",
-          path: "/user-dashboard/leaderboard",
+          path: "/user-leaderboard",
           icon: (
             <svg
               className="w-5 h-5"

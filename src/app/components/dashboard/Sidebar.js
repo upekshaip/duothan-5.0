@@ -1,10 +1,4 @@
-"use client"
-
 import { useState } from "react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
 import { Home, Trophy, Code, Users, Settings, LogOut, Menu, X, Target, BarChart3, Hammer } from "lucide-react"
 
 const navigation = [
@@ -18,12 +12,20 @@ const navigation = [
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ]
 
-export default function Sidebar({ user, onLogout }) {
+export default function Sidebar({ user, onLogout, activeItem = "/dashboard", onNavigation }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const pathname = usePathname()
 
   const handleLogout = () => {
-    onLogout()
+    if (onLogout) {
+      onLogout()
+    }
+    setIsMobileMenuOpen(false)
+  }
+
+  const handleNavClick = (href) => {
+    if (onNavigation) {
+      onNavigation(href)
+    }
     setIsMobileMenuOpen(false)
   }
 
@@ -31,85 +33,85 @@ export default function Sidebar({ user, onLogout }) {
     <>
       {/* Mobile menu button */}
       <div className="lg:hidden fixed top-4 left-4 z-50">
-        <Button
-          variant="outline"
-          size="icon"
+        <button
+          className="p-2 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 transition-colors"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="bg-background/80 backdrop-blur-sm"
         >
           {isMobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-        </Button>
+        </button>
       </div>
 
       {/* Sidebar */}
       <div
-        className={cn(
-          "fixed inset-y-0 left-0 z-40 w-64 bg-card border-r border-border transform transition-transform duration-200 ease-in-out lg:translate-x-0",
-          isMobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
-        )}
+        className={`fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-gray-200 transform transition-transform duration-200 ease-in-out lg:translate-x-0 ${
+          isMobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+        }`}
       >
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="p-6 border-b border-border">
+          <div className="p-6 border-b border-gray-200">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-lg">O</span>
               </div>
               <div>
-                <h2 className="font-semibold text-lg">OASIS</h2>
-                <p className="text-sm text-muted-foreground">Platform</p>
+                <h2 className="font-semibold text-lg text-gray-900">OASIS</h2>
+                <p className="text-sm text-gray-600">Platform</p>
               </div>
             </div>
           </div>
 
           {/* User Info */}
-          <div className="p-4 border-b border-border">
-            <div className="bg-muted/50 rounded-lg p-3">
-              <p className="font-medium text-sm">{user?.name}</p>
-              <p className="text-xs text-muted-foreground">{user?.team ? `Team: ${user.team.name}` : "No team"}</p>
+          <div className="p-4 border-b border-gray-200">
+            <div className="bg-gray-50 rounded-lg p-3">
+              <p className="font-medium text-sm text-gray-900">{user?.name || "Loading..."}</p>
+              <p className="text-xs text-gray-600">
+                {user?.team ? `Team: ${user.team.name}` : "No team"}
+              </p>
             </div>
           </div>
 
           {/* Navigation */}
           <nav className="flex-1 p-4 space-y-2">
             {navigation.map((item) => {
-              const isActive = pathname === item.href
+              const isActive = activeItem === item.href
+              const Icon = item.icon
               return (
-                <Link
+                <button
                   key={item.name}
-                  href={item.href}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={cn(
-                    "flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                  onClick={() => handleNavClick(item.href)}
+                  className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-left ${
                     isActive
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted",
-                  )}
+                      ? "bg-blue-600 text-white"
+                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                  }`}
                 >
-                  <item.icon className="h-4 w-4" />
+                  <Icon className="h-4 w-4" />
                   <span>{item.name}</span>
-                </Link>
+                </button>
               )
             })}
           </nav>
 
           {/* Footer */}
-          <div className="p-4 border-t border-border">
-            <Button
-              variant="ghost"
-              className="w-full justify-start text-muted-foreground hover:text-foreground"
+          <div className="p-4 border-t border-gray-200">
+            <button
+              className="w-full flex items-center justify-start px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
               onClick={handleLogout}
             >
               <LogOut className="h-4 w-4 mr-3" />
               Logout
-            </Button>
+            </button>
           </div>
         </div>
       </div>
 
       {/* Mobile overlay */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 bg-black/50 z-30 lg:hidden" onClick={() => setIsMobileMenuOpen(false)} />
+        <div 
+          className="fixed inset-0 bg-black/50 z-30 lg:hidden" 
+          onClick={() => setIsMobileMenuOpen(false)} 
+        />
       )}
     </>
   )

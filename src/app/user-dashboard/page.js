@@ -5,28 +5,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Code, Hammer, Trophy, Users, Clock, CheckCircle, Menu, LogOut, User, Settings } from "lucide-react"
+import Sidebar from "../components/dashboard/Sidebar"
 
 // Mock Sidebar component since we don't have the actual one
-const Sidebar = ({ user, onLogout }) => {
-  const [isOpen, setIsOpen] = useState(false)
-  
-  return (
-    <>
-      {/* Mobile menu button */}
-      <div className="lg:hidden fixed top-4 left-4 z-50">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          <Menu className="h-4 w-4" />
-        </Button>
-      </div>
-
-      <Sidebar></Sidebar>
-    </>
-  )
-}
 
 export default function DashboardPage() {
   const [user, setUser] = useState(null)

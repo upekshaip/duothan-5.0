@@ -29,24 +29,38 @@ export default function AdminDashboard() {
     ],
   };
 
-  const leaderboardData = {
+  const challengeStatusData = {
     options: {
       chart: {
-        type: "bar",
+        type: "donut",
         toolbar: { show: false },
         foreColor: "#9CA3AF",
       },
-      plotOptions: {
-        bar: { horizontal: true },
-      },
+      labels: ["Algorithmic", "Buildathon", "Both Completed", "Not Started"],
       theme: { mode: "dark" },
-    },
-    series: [
-      {
-        name: "Points",
-        data: [89, 78, 67, 65, 61],
+      plotOptions: {
+        pie: {
+          donut: {
+            size: "70%",
+            labels: {
+              show: true,
+              total: {
+                show: true,
+                label: "Total Teams",
+                formatter: function (w) {
+                  return w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                },
+              },
+            },
+          },
+        },
       },
-    ],
+      legend: {
+        position: "bottom",
+      },
+      colors: ["#3B82F6", "#10B981", "#6366F1", "#9CA3AF"],
+    },
+    series: [8, 6, 12, 4],
   };
 
   return (
@@ -107,15 +121,15 @@ export default function AdminDashboard() {
             />
           </div>
 
-          {/* Leaderboard */}
+          {/* Challenge Status Distribution */}
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-              Top Teams Leaderboard
+              Challenge Completion Status
             </h3>
             <Chart
-              options={leaderboardData.options}
-              series={leaderboardData.series}
-              type="bar"
+              options={challengeStatusData.options}
+              series={challengeStatusData.series}
+              type="donut"
               height={300}
             />
           </div>

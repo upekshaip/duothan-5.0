@@ -74,8 +74,8 @@ const DashNav = ({ user }) => {
               onClick={toggleDropdown}
             >
               <Image
-                src={user.image || profile}
-                alt={user.name}
+                src={profile}
+                alt={"profile"}
                 width={20}
                 height={20}
                 className="rounded-full h-9 w-9"
@@ -83,7 +83,7 @@ const DashNav = ({ user }) => {
             </button>
 
             {/* Dropdown Menu */}
-            {dropdownVisible && <NavDropDown user={user} />}
+            {dropdownVisible && <NavDropDown user={"profile"} />}
           </div>
         </div>
       </div>

@@ -1,7 +1,8 @@
 "use client";
 import React from "react";
 import dynamic from "next/dynamic";
-import Sidebar from "../components/Admin/Dashboard/Sidebar";
+// Update the import path to match the actual Sidebar component location
+import Sidebar from "../../components/Admin/Dashboard/Sidebar";
 
 // Dynamically import charts to avoid SSR issues
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });

@@ -47,7 +47,7 @@ const signup = async (formData) => {
     return redirect(`/signup?error=${error.message}`);
   }
   await signIn("credentials", {
-    redirectTo: "/feed",
+    redirectTo: "/user-dashboard",
     name,
     email,
     password,
@@ -70,7 +70,7 @@ const login = async (formData) => {
     }
     console.log("You logged in successfully");
     await signIn("credentials", {
-      redirectTo: "/feed",
+      redirectTo: "/user-dashboard",
       email,
       password,
     });

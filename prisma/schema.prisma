@@ -18,9 +18,11 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   teamId    Int?
+  nic       String?
   team      Team?     @relation(fields: [teamId], references: [id], onDelete: Cascade)
   algorithmicAnswers AlgorithmicAnswers[]
   buildathonAnswers BuildathonAnswers[]
+
 }
 
 model Team {

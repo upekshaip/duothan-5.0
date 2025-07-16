@@ -5,6 +5,7 @@ export default function Homes() {
   return (
     <>
       <GetNavBar />
+
       <Home />
     </>
   );

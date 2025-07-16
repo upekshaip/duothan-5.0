@@ -11,8 +11,107 @@ model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
   name      String
+  role      String   @default("USER")
   gender    String?
   password  String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  teamId    Int
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  algorithmicAnswers AlgorithmicAnswers[]
+  buildathonAnswers BuildathonAnswers[]
 }
+
+model Team {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  users       User[]
+  algorithmicAnswers AlgorithmicAnswers[]
+  buildathonAnswers BuildathonAnswers[]
+}
+
+model Admin {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String
+  role      String   @default("ADMIN")
+  password  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  challenges Challenge[]
+  algorithmicProblems AlgorithmicProblem[]
+  buildathonProblems BuildathonProblem[]
+}
+
+model Challenge {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  status     String   @default("PENDING")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   Int
+  admin       Admin    @relation(fields: [createdBy], references: [id])
+}
+
+model AlgorithmicProblem {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  problem     String?
+  points      Int   @default(0)
+  status      String   @default("PENDING")
+  difficulty  String   @default("EASY")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   Int
+  admin       Admin    @relation(fields: [createdBy], references: [id])
+  algorithmicAnswers AlgorithmicAnswers[]
+
+
+}
+model BuildathonProblem {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  problem     String?
+  points      Int?   @default(0)
+  status      String   @default("PENDING")
+  difficulty  String   @default("EASY")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   Int
+  admin       Admin    @relation(fields: [createdBy], references: [id])
+  buildathonAnswers BuildathonAnswers[]
+}
+model AlgorithmicAnswers {
+id          Int      @id @default(autoincrement())
+answer     String
+userId     Int
+user       User     @relation(fields: [userId], references: [id])
+teamId     Int
+team       Team     @relation(fields: [teamId], references: [id])
+problemId  Int
+problem    AlgorithmicProblem @relation(fields: [problemId], references: [id])
+timeTaken   Int?    @default(0)
+createdAt DateTime @default(now())
+updatedAt DateTime @updatedAt
+
+}
+model BuildathonAnswers {
+  id          Int      @id @default(autoincrement())
+  answer     String
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
+  teamId     Int
+  team       Team     @relation(fields: [teamId], references: [id])
+  problemId  Int
+  problem    BuildathonProblem @relation(fields: [problemId], references: [id])
+  timeTaken   Int?    @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+

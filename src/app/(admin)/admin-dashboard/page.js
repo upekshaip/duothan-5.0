@@ -1,932 +1,271 @@
 "use client";
+import React from "react";
+import dynamic from "next/dynamic";
+import Sidebar from "../components/Admin/Dashboard/Sidebar";
 
-import React, { useState, useEffect } from "react";
-import {
-  Users,
-  Trophy,
-  FileText,
-  TrendingUp,
-  Plus,
-  Edit,
-  Trash2,
-  Eye,
-  Flag,
-  Code,
-  Settings,
-  Activity,
-  Calendar,
-  Search,
-  Filter,
-  BarChart3,
-  PieChart,
-  Target,
-  Zap,
-} from "lucide-react";
+// Dynamically import charts to avoid SSR issues
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
-// Mock data for demonstration
-const mockStats = {
-  registeredTeams: 1247,
-  activeChallenges: 12,
-  totalSubmissions: 3854,
-  completedChallenges: 8,
-};
-
-const mockLeaderboard = [
-  {
-    id: 1,
-    team: "CodeCrusaders",
-    score: 2850,
-    challenges: 8,
-    lastActive: "2 hours ago",
-  },
-  {
-    id: 2,
-    team: "ByteBuilders",
-    score: 2640,
-    challenges: 7,
-    lastActive: "4 hours ago",
-  },
-  {
-    id: 3,
-    team: "DevDynamos",
-    score: 2520,
-    challenges: 6,
-    lastActive: "1 hour ago",
-  },
-  {
-    id: 4,
-    team: "AlgoAces",
-    score: 2380,
-    challenges: 7,
-    lastActive: "6 hours ago",
-  },
-  {
-    id: 5,
-    team: "TechTitans",
-    score: 2250,
-    challenges: 5,
-    lastActive: "3 hours ago",
-  },
-];
-
-const mockChallenges = [
-  {
-    id: 1,
-    title: "Data Structure Mastery",
-    status: "Active",
-    participants: 234,
-    submissions: 156,
-    algorithmic: {
-      title: "Binary Tree Traversal",
-      difficulty: "Medium",
-      description: "Implement efficient tree traversal algorithms",
-      flag: "TREE_MASTER_2024",
+export default function AdminDashboard() {
+  // Mock data for charts
+  const submissionData = {
+    options: {
+      chart: {
+        type: "area",
+        toolbar: { show: false },
+        foreColor: "#9CA3AF",
+      },
+      stroke: { curve: "smooth" },
+      xaxis: {
+        categories: ["Week 1", "Week 2", "Week 3", "Week 4"],
+      },
+      theme: { mode: "dark" },
     },
-    buildathon: {
-      title: "Real-time Chat Application",
-      duration: "48 hours",
-      description: "Build a scalable chat app with WebSocket support",
-      requirements: [
-        "React/Vue frontend",
-        "Node.js backend",
-        "Database integration",
-      ],
+    series: [
+      {
+        name: "Submissions",
+        data: [30, 45, 57, 42],
+      },
+    ],
+  };
+
+  const leaderboardData = {
+    options: {
+      chart: {
+        type: "bar",
+        toolbar: { show: false },
+        foreColor: "#9CA3AF",
+      },
+      plotOptions: {
+        bar: { horizontal: true },
+      },
+      theme: { mode: "dark" },
     },
-    createdAt: "2024-01-15",
-  },
-  {
-    id: 2,
-    title: "AI Innovation Challenge",
-    status: "Draft",
-    participants: 0,
-    submissions: 0,
-    algorithmic: {
-      title: "Neural Network Implementation",
-      difficulty: "Hard",
-      description: "Build a neural network from scratch",
-      flag: "NEURAL_NET_FLAG",
-    },
-    buildathon: {
-      title: "AI-powered Analytics Dashboard",
-      duration: "72 hours",
-      description: "Create an intelligent analytics platform",
-      requirements: [
-        "Machine Learning integration",
-        "Data visualization",
-        "REST API",
-      ],
-    },
-    createdAt: "2024-01-20",
-  },
-];
-
-const Dashboard = () => {
-  const [activeTab, setActiveTab] = useState("overview");
-  const [challenges, setChallenges] = useState(mockChallenges);
-  const [selectedChallenge, setSelectedChallenge] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState("");
-
-  const StatCard = ({ title, value, icon: Icon, trend, color }) => (
-    <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-gray-800 hover:shadow-xl transition-shadow duration-300">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm font-medium text-gray-600">{title}</p>
-          <p className="text-2xl font-bold text-gray-900 mt-1">{value}</p>
-          {trend && (
-            <p className="text-sm text-gray-700 mt-1 flex items-center">
-              <TrendingUp className="w-4 h-4 mr-1" />
-              {trend}
-            </p>
-          )}
-        </div>
-        <div className="p-3 rounded-full bg-gray-800">
-          <Icon className="w-6 h-6 text-white" />
-        </div>
-      </div>
-    </div>
-  );
-
-  const LeaderboardCard = () => (
-    <div className="bg-white rounded-xl shadow-lg p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">Top Teams</h3>
-        <Trophy className="w-5 h-5 text-gray-600" />
-      </div>
-      <div className="space-y-3">
-        {mockLeaderboard.map((team, index) => (
-          <div
-            key={team.id}
-            className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-          >
-            <div className="flex items-center space-x-3">
-              <span
-                className={`w-6 h-6 rounded-full flex items-center justify-center text-sm font-bold ${
-                  index === 0
-                    ? "bg-black text-white"
-                    : index === 1
-                    ? "bg-gray-600 text-white"
-                    : index === 2
-                    ? "bg-gray-500 text-white"
-                    : "bg-gray-200 text-gray-600"
-                }`}
-              >
-                {index + 1}
-              </span>
-              <div>
-                <p className="font-medium text-gray-900">{team.team}</p>
-                <p className="text-sm text-gray-500">
-                  {team.challenges} challenges completed
-                </p>
-              </div>
-            </div>
-            <div className="text-right">
-              <p className="font-semibold text-gray-900">{team.score}</p>
-              <p className="text-sm text-gray-500">{team.lastActive}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-
-  const ChallengeCard = ({ challenge }) => (
-    <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200 hover:shadow-xl transition-shadow duration-300">
-      <div className="flex items-center justify-between mb-4">
-        <div>
-          <h3 className="text-lg font-semibold text-gray-900">
-            {challenge.title}
-          </h3>
-          <span
-            className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
-              challenge.status === "Active"
-                ? "bg-gray-800 text-white"
-                : "bg-gray-200 text-gray-800"
-            }`}
-          >
-            {challenge.status}
-          </span>
-        </div>
-        <div className="flex space-x-2">
-          <button
-            onClick={() => {
-              setSelectedChallenge(challenge);
-              setShowModal(true);
-              setModalType("view");
-            }}
-            className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
-          >
-            <Eye className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => {
-              setSelectedChallenge(challenge);
-              setShowModal(true);
-              setModalType("edit");
-            }}
-            className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
-          >
-            <Edit className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => {
-              if (confirm("Are you sure you want to delete this challenge?")) {
-                setChallenges(challenges.filter((c) => c.id !== challenge.id));
-              }
-            }}
-            className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
-          >
-            <Trash2 className="w-4 h-4" />
-          </button>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4 mb-4">
-        <div className="text-center p-3 bg-gray-100 rounded-lg">
-          <Users className="w-5 h-5 mx-auto mb-1 text-gray-600" />
-          <p className="text-sm font-medium text-gray-600">
-            {challenge.participants}
-          </p>
-          <p className="text-xs text-gray-500">Participants</p>
-        </div>
-        <div className="text-center p-3 bg-gray-100 rounded-lg">
-          <FileText className="w-5 h-5 mx-auto mb-1 text-gray-600" />
-          <p className="text-sm font-medium text-gray-600">
-            {challenge.submissions}
-          </p>
-          <p className="text-xs text-gray-500">Submissions</p>
-        </div>
-      </div>
-
-      <div className="space-y-3">
-        <div className="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
-          <div className="flex items-center space-x-2">
-            <Code className="w-4 h-4 text-gray-600" />
-            <span className="text-sm font-medium text-gray-600">
-              Algorithmic
-            </span>
-          </div>
-          <span className="text-xs bg-gray-200 text-gray-800 px-2 py-1 rounded">
-            {challenge.algorithmic.difficulty}
-          </span>
-        </div>
-        <div className="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
-          <div className="flex items-center space-x-2">
-            <Target className="w-4 h-4 text-gray-600" />
-            <span className="text-sm font-medium text-gray-600">
-              Buildathon
-            </span>
-          </div>
-          <span className="text-xs bg-gray-200 text-gray-800 px-2 py-1 rounded">
-            {challenge.buildathon.duration}
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-
-  const Modal = ({ challenge, type, onClose }) => {
-    const [formData, setFormData] = useState(
-      challenge || {
-        title: "",
-        status: "Draft",
-        algorithmic: {
-          title: "",
-          difficulty: "Easy",
-          description: "",
-          flag: "",
-        },
-        buildathon: {
-          title: "",
-          duration: "24 hours",
-          description: "",
-          requirements: [],
-        },
-      }
-    );
-
-    const handleSubmit = (e) => {
-      e.preventDefault();
-      if (type === "edit") {
-        setChallenges(
-          challenges.map((c) =>
-            c.id === challenge.id ? { ...formData, id: challenge.id } : c
-          )
-        );
-      } else if (type === "create") {
-        setChallenges([
-          ...challenges,
-          {
-            ...formData,
-            id: Date.now(),
-            participants: 0,
-            submissions: 0,
-            createdAt: new Date().toISOString().split("T")[0],
-          },
-        ]);
-      }
-      onClose();
-    };
-
-    return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-        <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-          <div className="p-6 border-b border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-900">
-              {type === "view"
-                ? "View Challenge"
-                : type === "edit"
-                ? "Edit Challenge"
-                : "Create Challenge"}
-            </h2>
-          </div>
-
-          <div className="p-6">
-            {type === "view" ? (
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    {challenge.title}
-                  </h3>
-                  <span
-                    className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
-                      challenge.status === "Active"
-                        ? "bg-green-100 text-green-800"
-                        : "bg-yellow-100 text-yellow-800"
-                    }`}
-                  >
-                    {challenge.status}
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    <h4 className="font-medium text-purple-600 flex items-center">
-                      <Code className="w-4 h-4 mr-2" />
-                      Algorithmic Problem
-                    </h4>
-                    <div className="bg-purple-50 p-4 rounded-lg">
-                      <p className="font-medium">
-                        {challenge.algorithmic.title}
-                      </p>
-                      <p className="text-sm text-gray-600 mt-1">
-                        {challenge.algorithmic.description}
-                      </p>
-                      <div className="mt-2 flex items-center justify-between">
-                        <span className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">
-                          {challenge.algorithmic.difficulty}
-                        </span>
-                        <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded flex items-center">
-                          <Flag className="w-3 h-3 mr-1" />
-                          {challenge.algorithmic.flag}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <h4 className="font-medium text-orange-600 flex items-center">
-                      <Target className="w-4 h-4 mr-2" />
-                      Buildathon Problem
-                    </h4>
-                    <div className="bg-orange-50 p-4 rounded-lg">
-                      <p className="font-medium">
-                        {challenge.buildathon.title}
-                      </p>
-                      <p className="text-sm text-gray-600 mt-1">
-                        {challenge.buildathon.description}
-                      </p>
-                      <div className="mt-2">
-                        <span className="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded">
-                          {challenge.buildathon.duration}
-                        </span>
-                      </div>
-                      <div className="mt-3">
-                        <p className="text-sm font-medium text-gray-700">
-                          Requirements:
-                        </p>
-                        <ul className="text-sm text-gray-600 mt-1">
-                          {challenge.buildathon.requirements.map(
-                            (req, index) => (
-                              <li key={index} className="flex items-center">
-                                <span className="w-1 h-1 bg-gray-400 rounded-full mr-2"></span>
-                                {req}
-                              </li>
-                            )
-                          )}
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Challenge Title
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.title}
-                      onChange={(e) =>
-                        setFormData({ ...formData, title: e.target.value })
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Status
-                    </label>
-                    <select
-                      value={formData.status}
-                      onChange={(e) =>
-                        setFormData({ ...formData, status: e.target.value })
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="Draft">Draft</option>
-                      <option value="Active">Active</option>
-                      <option value="Completed">Completed</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    <h4 className="font-medium text-purple-600 flex items-center">
-                      <Code className="w-4 h-4 mr-2" />
-                      Algorithmic Problem
-                    </h4>
-                    <div className="space-y-3">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Title
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.algorithmic?.title || ""}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              algorithmic: {
-                                ...formData.algorithmic,
-                                title: e.target.value,
-                              },
-                            })
-                          }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Difficulty
-                        </label>
-                        <select
-                          value={formData.algorithmic?.difficulty || "Easy"}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              algorithmic: {
-                                ...formData.algorithmic,
-                                difficulty: e.target.value,
-                              },
-                            })
-                          }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                        >
-                          <option value="Easy">Easy</option>
-                          <option value="Medium">Medium</option>
-                          <option value="Hard">Hard</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Description
-                        </label>
-                        <textarea
-                          value={formData.algorithmic?.description || ""}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              algorithmic: {
-                                ...formData.algorithmic,
-                                description: e.target.value,
-                              },
-                            })
-                          }
-                          rows={3}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Flag
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.algorithmic?.flag || ""}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              algorithmic: {
-                                ...formData.algorithmic,
-                                flag: e.target.value,
-                              },
-                            })
-                          }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                          placeholder="FLAG_NAME_2024"
-                          required
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <h4 className="font-medium text-orange-600 flex items-center">
-                      <Target className="w-4 h-4 mr-2" />
-                      Buildathon Problem
-                    </h4>
-                    <div className="space-y-3">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Title
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.buildathon?.title || ""}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              buildathon: {
-                                ...formData.buildathon,
-                                title: e.target.value,
-                              },
-                            })
-                          }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Duration
-                        </label>
-                        <select
-                          value={formData.buildathon?.duration || "24 hours"}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              buildathon: {
-                                ...formData.buildathon,
-                                duration: e.target.value,
-                              },
-                            })
-                          }
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-                        >
-                          <option value="24 hours">24 hours</option>
-                          <option value="48 hours">48 hours</option>
-                          <option value="72 hours">72 hours</option>
-                          <option value="1 week">1 week</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Description
-                        </label>
-                        <textarea
-                          value={formData.buildathon?.description || ""}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              buildathon: {
-                                ...formData.buildathon,
-                                description: e.target.value,
-                              },
-                            })
-                          }
-                          rows={3}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Requirements (one per line)
-                        </label>
-                        <textarea
-                          value={
-                            formData.buildathon?.requirements?.join("\n") || ""
-                          }
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              buildathon: {
-                                ...formData.buildathon,
-                                requirements: e.target.value
-                                  .split("\n")
-                                  .filter((r) => r.trim()),
-                              },
-                            })
-                          }
-                          rows={3}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-                          placeholder="React/Vue frontend&#10;Node.js backend&#10;Database integration"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
-                  <button
-                    type="button"
-                    onClick={onClose}
-                    className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                  >
-                    {type === "edit" ? "Update Challenge" : "Create Challenge"}
-                  </button>
-                </div>
-              </form>
-            )}
-          </div>
-        </div>
-      </div>
-    );
+    series: [
+      {
+        name: "Points",
+        data: [89, 78, 67, 65, 61],
+      },
+    ],
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-4">
-              <div className="bg-black p-2 rounded-lg">
-                <Activity className="w-6 h-6 text-white" />
-              </div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                Admin Dashboard
-              </h1>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <Sidebar />
+      <div className="ml-64 p-8">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
+          Dashboard Overview
+        </h1>
+
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
+            <h3 className="text-gray-500 dark:text-gray-400 text-sm font-medium">
+              Registered Teams
+            </h3>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white">
+              24
+            </p>
+            <div className="mt-2 text-green-600 text-sm">
+              ↑ 12% from last week
             </div>
-            <div className="flex items-center space-x-4">
-              <button className="flex items-center space-x-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800">
-                <Plus className="w-4 h-4" />
-                <span>New Challenge</span>
-              </button>
-              <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
+          </div>
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
+            <h3 className="text-gray-500 dark:text-gray-400 text-sm font-medium">
+              Active Challenges
+            </h3>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white">
+              5
+            </p>
+            <div className="mt-2 text-blue-600 text-sm">2 ending this week</div>
+          </div>
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
+            <h3 className="text-gray-500 dark:text-gray-400 text-sm font-medium">
+              Total Submissions
+            </h3>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white">
+              174
+            </p>
+            <div className="mt-2 text-green-600 text-sm">
+              ↑ 8% from last week
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Navigation */}
-      <div className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="flex space-x-8">
-            <button
-              onClick={() => setActiveTab("overview")}
-              className={`py-4 px-2 border-b-2 font-medium text-sm ${
-                activeTab === "overview"
-                  ? "border-black text-black"
-                  : "border-transparent text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              Overview
-            </button>
-            <button
-              onClick={() => setActiveTab("challenges")}
-              className={`py-4 px-2 border-b-2 font-medium text-sm ${
-                activeTab === "challenges"
-                  ? "border-black text-black"
-                  : "border-transparent text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              Challenge Management
-            </button>
-          </nav>
+        {/* Charts Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          {/* Submission Trends */}
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              Submission Trends
+            </h3>
+            <Chart
+              options={submissionData.options}
+              series={submissionData.series}
+              type="area"
+              height={300}
+            />
+          </div>
+
+          {/* Leaderboard */}
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              Top Teams Leaderboard
+            </h3>
+            <Chart
+              options={leaderboardData.options}
+              series={leaderboardData.series}
+              type="bar"
+              height={300}
+            />
+          </div>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {activeTab === "overview" && (
-          <div className="space-y-8">
-            {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <StatCard
-                title="Registered Teams"
-                value={mockStats.registeredTeams.toLocaleString()}
-                icon={Users}
-                trend="+12% from last month"
-              />
-              <StatCard
-                title="Active Challenges"
-                value={mockStats.activeChallenges}
-                icon={Trophy}
-                trend="+3 new this week"
-              />
-              <StatCard
-                title="Total Submissions"
-                value={mockStats.totalSubmissions.toLocaleString()}
-                icon={FileText}
-                trend="+234 today"
-              />
-              <StatCard
-                title="Completed Challenges"
-                value={mockStats.completedChallenges}
-                icon={Target}
-                trend="2 completed this week"
-              />
-            </div>
-
-            {/* Charts and Leaderboard */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Activity Chart */}
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    Activity Overview
-                  </h3>
-                  <BarChart3 className="w-5 h-5 text-gray-600" />
-                </div>
-                <div className="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
-                  <div className="text-center">
-                    <PieChart className="w-12 h-12 mx-auto text-gray-400 mb-2" />
-                    <p className="text-gray-500">
-                      Chart visualization would go here
-                    </p>
-                    <p className="text-sm text-gray-400">
-                      Connect with backend for real-time data
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Leaderboard */}
-              <LeaderboardCard />
-            </div>
-
-            {/* Recent Activity */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Recent Activity
-              </h3>
-              <div className="space-y-4">
+        {/* Leaderboard Snapshot */}
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm mb-8">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+              Leaderboard Snapshot
+            </h3>
+            <button className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+              View Full Leaderboard
+            </button>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead>
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Rank
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Team
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Completed Challenges
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Success Rate
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Total Points
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Trend
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {[
                   {
-                    action: "New team registration",
-                    team: "CodeMasters",
-                    time: "2 minutes ago",
-                    type: "success",
+                    rank: 1,
+                    team: "Team Alpha",
+                    completed: 8,
+                    rate: "92%",
+                    points: 890,
+                    trend: "up",
                   },
                   {
-                    action: "Challenge submission",
-                    team: "ByteBuilders",
-                    time: "15 minutes ago",
-                    type: "info",
+                    rank: 2,
+                    team: "Team Beta",
+                    completed: 7,
+                    rate: "88%",
+                    points: 780,
+                    trend: "up",
                   },
                   {
-                    action: "Flag captured",
-                    team: "DevDynamos",
-                    time: "32 minutes ago",
-                    type: "warning",
+                    rank: 3,
+                    team: "Team Gamma",
+                    completed: 6,
+                    rate: "85%",
+                    points: 670,
+                    trend: "down",
                   },
                   {
-                    action: "Buildathon completed",
-                    team: "AlgoAces",
-                    time: "1 hour ago",
-                    type: "success",
+                    rank: 4,
+                    team: "Team Delta",
+                    completed: 6,
+                    rate: "83%",
+                    points: 650,
+                    trend: "same",
                   },
-                ].map((activity, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                  {
+                    rank: 5,
+                    team: "Team Epsilon",
+                    completed: 5,
+                    rate: "80%",
+                    points: 610,
+                    trend: "up",
+                  },
+                ].map((team) => (
+                  <tr
+                    key={team.rank}
+                    className="hover:bg-gray-50 dark:hover:bg-gray-700"
                   >
-                    <div className="flex items-center space-x-3">
-                      <div
-                        className={`w-2 h-2 rounded-full ${
-                          activity.type === "success"
-                            ? "bg-gray-800"
-                            : activity.type === "info"
-                            ? "bg-gray-600"
-                            : "bg-gray-500"
-                        }`}
-                      ></div>
-                      <div>
-                        <p className="font-medium text-gray-900">
-                          {activity.action}
-                        </p>
-                        <p className="text-sm text-gray-500">
-                          by {activity.team}
-                        </p>
-                      </div>
-                    </div>
-                    <p className="text-sm text-gray-500">{activity.time}</p>
-                  </div>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                      {team.rank === 1 ? "🏆 " : ""}
+                      {team.rank}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                      {team.team}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                      {team.completed}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                      {team.rate}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                      {team.points}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      {team.trend === "up" && (
+                        <span className="text-green-600">↑</span>
+                      )}
+                      {team.trend === "down" && (
+                        <span className="text-red-600">↓</span>
+                      )}
+                      {team.trend === "same" && (
+                        <span className="text-gray-600">→</span>
+                      )}
+                    </td>
+                  </tr>
                 ))}
-              </div>
-            </div>
+              </tbody>
+            </table>
           </div>
-        )}
+        </div>
 
-        {activeTab === "challenges" && (
-          <div className="space-y-6">
-            {/* Challenge Management Header */}
-            <div className="flex justify-between items-center">
-              <h2 className="text-xl font-semibold text-gray-900">
-                Challenge Management
-              </h2>
-              <button
-                onClick={() => {
-                  setSelectedChallenge(null);
-                  setShowModal(true);
-                  setModalType("create");
-                }}
-                className="flex items-center space-x-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800"
+        {/* Recent Activity */}
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            Recent Activity
+          </h3>
+          <div className="space-y-4">
+            {[1, 2, 3].map((item) => (
+              <div
+                key={item}
+                className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-4"
               >
-                <Plus className="w-4 h-4" />
-                <span>Create New Challenge</span>
-              </button>
-            </div>
-
-            {/* Search and Filter */}
-            <div className="flex items-center space-x-4">
-              <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <input
-                  type="text"
-                  placeholder="Search challenges..."
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
-                />
+                <div className="flex items-center">
+                  <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                      Team Alpha submitted Challenge #3
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      2 hours ago
+                    </p>
+                  </div>
+                </div>
+                <span className="text-sm text-gray-500 dark:text-gray-400">
+                  View
+                </span>
               </div>
-              <button className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
-                <Filter className="w-4 h-4" />
-                <span>Filter</span>
-              </button>
-            </div>
-
-            {/* Challenges Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {challenges.map((challenge) => (
-                <ChallengeCard key={challenge.id} challenge={challenge} />
-              ))}
-            </div>
-
-            {/* Empty State */}
-            {challenges.length === 0 && (
-              <div className="text-center py-12">
-                <Target className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  No challenges yet
-                </h3>
-                <p className="text-gray-500 mb-6">
-                  Get started by creating your first challenge
-                </p>
-                <button
-                  onClick={() => {
-                    setSelectedChallenge(null);
-                    setShowModal(true);
-                    setModalType("create");
-                  }}
-                  className="flex items-center space-x-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 mx-auto"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Create Challenge</span>
-                </button>
-              </div>
-            )}
+            ))}
           </div>
-        )}
+        </div>
       </div>
-
-      {/* Modal */}
-      {showModal && (
-        <Modal
-          challenge={selectedChallenge}
-          type={modalType}
-          onClose={() => {
-            setShowModal(false);
-            setSelectedChallenge(null);
-            setModalType("");
-          }}
-        />
-      )}
     </div>
   );
-};
-
-export default Dashboard;
+}

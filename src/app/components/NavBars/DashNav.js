@@ -73,13 +73,7 @@ const DashNav = ({ user }) => {
               className="flex items-center space-x-2"
               onClick={toggleDropdown}
             >
-              <Image
-                src={user.image || profile}
-                alt={user.name}
-                width={20}
-                height={20}
-                className="rounded-full h-9 w-9"
-              />
+              
             </button>
 
             {/* Dropdown Menu */}

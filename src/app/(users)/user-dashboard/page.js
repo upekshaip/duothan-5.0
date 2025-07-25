@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Code, Hammer, Trophy, Users, Clock, CheckCircle, Menu, LogOut, User, Settings } from "lucide-react"
-import Sidebar from "../components/dashboard/Sidebar"
+import Sidebar from "@/app/components/Auth/Sidebar"
 
 // Mock Sidebar component since we don't have the actual one
 
